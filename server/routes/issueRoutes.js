@@ -5,7 +5,8 @@ const {
     getIssues,
     updateIssue,
     deleteIssue,
-    assignIssue
+    assignIssue,
+    getMyIssues
 } = require("../controllers/issueController");
 
 const {
@@ -25,10 +26,9 @@ router.put("/:id", protect, updateIssue);
 router.delete("/:id", protect, deleteIssue);
 
 router.put(
-    "/assign/:id",
-    protect,
-    adminOnly,
-    assignIssue
+  "/assign/:id",
+  protect,
+  assignIssue
 );
 
 router.get(

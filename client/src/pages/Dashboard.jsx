@@ -1,34 +1,62 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
+import Navbar from "../components/Navbar";
+import IssueForm from "../components/IssueForm";
+import IssueCard from "../components/IssueCard";
 
 function Dashboard() {
-
   const [issues, setIssues] = useState([]);
 
   useEffect(() => {
-
     fetchIssues();
-
   }, []);
 
   const fetchIssues = async () => {
-
-    const res = await API.get("/issues");
-
-    setIssues(res.data);
+    try {
+      const res = await API.get("/issues");
+      setIssues(res.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  return (
-    <div>
-      <h1>Dashboard</h1>
+  const total = issues.length;
 
-      {issues.map((issue) => (
-        <div key={issue._id}>
-          <h3>{issue.title}</h3>
-          <p>{issue.status}</p>
-        </div>
-      ))}
-    </div>
+  const todo = issues.filter(
+    (issue) => issue.status === "Todo"
+  ).length;
+
+  const progress = issues.filter(
+    (issue) => issue.status === "In Progress"
+  ).length;
+
+  const done = issues.filter(
+    (issue) => issue.status === "Done"
+  ).length;
+
+  return (
+    <>
+      <Navbar />
+
+      <div style={{ padding: "20px" }}>
+        <IssueForm fetchIssues={fetchIssues} />
+
+        <h1>Dashboard</h1>
+
+        <h3>Total Issues: {total}</h3>
+        <h3>Todo: {todo}</h3>
+        <h3>In Progress: {progress}</h3>
+        <h3>Done: {done}</h3>
+
+        {issues.map((issue) => (
+          <IssueCard
+            key={issue._id}
+            issue={issue}
+            fetchIssues={fetchIssues}
+          />
+        ))}
+      </div>
+    </>
   );
 }
 
